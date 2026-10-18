@@ -116,6 +116,13 @@ func ChunkDir(pkgPath string, files []File, includeTests bool) Result {
 	return res
 }
 
+// IsGenerated reports whether src carries the standard "Code generated ...
+// DO NOT EDIT." marker. Unparsable files count as not generated.
+func IsGenerated(path string, src []byte) bool {
+	f, err := parser.ParseFile(token.NewFileSet(), path, src, parser.PackageClauseOnly|parser.ParseComments)
+	return err == nil && ast.IsGenerated(f)
+}
+
 type fileChunker struct {
 	fset      *token.FileSet
 	tf        *token.File

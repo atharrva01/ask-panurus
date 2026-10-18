@@ -2,47 +2,20 @@ package index
 
 import (
 	"context"
-	"os"
 	"testing"
 
-	"github.com/jackc/pgx/v5"
-
 	"github.com/atharrva01/ask-panurus/internal/chunk"
+	"github.com/atharrva01/ask-panurus/internal/testdb"
+	"github.com/atharrva01/ask-panurus/internal/tokenize"
 )
 
-// The store tests need a real Postgres with pgvector, for example:
-//
-//	docker compose -f deploy/docker-compose.yml up -d postgres
-//	ASK_PANURUS_TEST_DB=postgres://ask:ask@localhost:5433/postgres go test ./internal/index/
-//
-// Each run creates and drops its own database.
 func testStore(t *testing.T) *Store {
 	t.Helper()
-	admin := os.Getenv("ASK_PANURUS_TEST_DB")
-	if admin == "" {
-		t.Skip("ASK_PANURUS_TEST_DB not set")
-	}
-	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, admin)
+	s, err := Open(context.Background(), testdb.URL(t, "ask_panurus_index_test"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	const name = "ask_panurus_test"
-	conn.Exec(ctx, "DROP DATABASE IF EXISTS "+name)
-	if _, err := conn.Exec(ctx, "CREATE DATABASE "+name); err != nil {
-		t.Fatal(err)
-	}
-	cfg, _ := pgx.ParseConfig(admin)
-	cfg.Database = name
-	s, err := Open(ctx, cfg.ConnString())
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() {
-		s.Close()
-		conn.Exec(ctx, "DROP DATABASE IF EXISTS "+name)
-		conn.Close(ctx)
-	})
+	t.Cleanup(s.Close)
 	return s
 }
 
@@ -97,7 +70,8 @@ func TestVersionsEmbeddingCacheAndLiveSwitch(t *testing.T) {
 	// Keyword index: the camelCase identifier is findable by a part, and the
 	// qualified method name is stored for exact lookup.
 	var n int
-	s.Pool.QueryRow(ctx, `SELECT count(*) FROM chunks WHERE version_id = $1 AND tsv @@ to_tsquery('simple', 'factory')`, v2).Scan(&n)
+	term := tokenize.QueryTerms("factory")[0] // queries are tokenized like the index
+	s.Pool.QueryRow(ctx, `SELECT count(*) FROM chunks WHERE version_id = $1 AND tsv @@ to_tsquery('simple', $2)`, v2, term).Scan(&n)
 	if n != 1 {
 		t.Errorf("keyword match on camelCase part = %d, want 1", n)
 	}

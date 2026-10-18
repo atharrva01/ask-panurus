@@ -16,6 +16,7 @@ import (
 	"github.com/atharrva01/ask-panurus/internal/chunk"
 	"github.com/atharrva01/ask-panurus/internal/ingest/build"
 	"github.com/atharrva01/ask-panurus/internal/ingest/docs"
+	"github.com/atharrva01/ask-panurus/internal/ingest/fixed"
 	"github.com/atharrva01/ask-panurus/internal/ingest/gocode"
 	"github.com/atharrva01/ask-panurus/internal/ingest/secrets"
 )
@@ -33,6 +34,9 @@ type Options struct {
 	Repo         string // GitHub owner/name, used in citation links
 	Commit       string // commit SHA the snapshot was taken at
 	IncludeTests bool
+	// Chunker is "ast" (the default) or "fixed", the run A baseline. Both
+	// read exactly the same files.
+	Chunker string
 }
 
 // Stats summarises a run so every index build is auditable.
@@ -91,6 +95,10 @@ func Run(opts Options) ([]chunk.Chunk, Stats, error) {
 				modules[path.Dir(rel)] = mod
 			}
 		}
+		if opts.Chunker == "fixed" {
+			out = append(out, fixedChunks(opts, &st, rel, src, isGo, isDoc)...)
+			return nil
+		}
 		switch {
 		case isGo:
 			st.Files["go"]++
@@ -141,6 +149,33 @@ func Run(opts Options) ([]chunk.Chunk, Stats, error) {
 	}
 	chunk.AssignIDs(kept)
 	return kept, st, nil
+}
+
+// fixedChunks applies the run A baseline to one file, skipping the same
+// generated and test files the AST chunker skips.
+func fixedChunks(opts Options, st *Stats, rel string, src []byte, isGo, isDoc bool) []chunk.Chunk {
+	switch {
+	case isGo:
+		st.Files["go"]++
+		isTest := strings.HasSuffix(rel, "_test.go")
+		if (isTest && !opts.IncludeTests) || gocode.IsGenerated(rel, src) {
+			if !isTest {
+				st.Generated++
+			}
+			return nil
+		}
+		kind := chunk.KindCode
+		if isTest {
+			kind = chunk.KindTest
+		}
+		return fixed.Chunk(rel, src, kind)
+	case isDoc:
+		st.Files["markdown"]++
+		return fixed.Chunk(rel, src, chunk.KindDoc)
+	default:
+		st.Files["build"]++
+		return fixed.Chunk(rel, src, chunk.KindBuild)
+	}
 }
 
 // importPath resolves a directory to its Go import path using the nearest

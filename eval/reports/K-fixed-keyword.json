@@ -1,0 +1,647 @@
+{
+ "run": "K-fixed-keyword",
+ "date": "2026-10-18T06:10:14+00:00",
+ "evalset": "eval/v1.yaml",
+ "panurus_commit": "6cf946a9b519f4691a195ce02f220bbc1fadc473",
+ "index_version": 3,
+ "mode": "keyword",
+ "note": "diagnostic: fixed 1000-char chunks, BM25 only (no symbols in fixed chunks)",
+ "overall": {
+  "n": 21,
+  "recall@5": 0.5714285714285714,
+  "recall@10": 0.8095238095238095,
+  "mrr": 0.4232048374905517,
+  "hits@5": 12
+ },
+ "by_type": {
+  "locate": {
+   "n": 6,
+   "recall@5": 0.3333333333333333,
+   "recall@10": 0.6666666666666666,
+   "mrr": 0.37566137566137564,
+   "hits@5": 2
+  },
+  "explain": {
+   "n": 6,
+   "recall@5": 0.8333333333333334,
+   "recall@10": 0.8333333333333334,
+   "mrr": 0.46388888888888896,
+   "hits@5": 5
+  },
+  "compare": {
+   "n": 4,
+   "recall@5": 0.5,
+   "recall@10": 0.75,
+   "mrr": 0.3958333333333333,
+   "hits@5": 2
+  },
+  "why": {
+   "n": 2,
+   "recall@5": 0.0,
+   "recall@10": 1.0,
+   "mrr": 0.13333333333333333,
+   "hits@5": 0
+  },
+  "how-to": {
+   "n": 3,
+   "recall@5": 1.0,
+   "recall@10": 1.0,
+   "mrr": 0.6666666666666666,
+   "hits@5": 3
+  }
+ },
+ "pending_issue_sources": [
+  "q019"
+ ],
+ "refusal_signals": {
+  "bm25": {
+   "threshold": 23.614056442502154,
+   "refusal_accuracy": 0.875,
+   "false_refusal_rate": 0.47619047619047616,
+   "answerable_median": 23.614056442502154,
+   "unanswerable_median": 17.799480943007588
+  },
+  "coverage": {
+   "threshold": 0.6215696087448085,
+   "refusal_accuracy": 0.875,
+   "false_refusal_rate": 0.047619047619047616,
+   "answerable_median": 0.8509861819079668,
+   "unanswerable_median": 0.4472141047349699
+  }
+ },
+ "questions": [
+  {
+   "id": "q001",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "integration/token/common/sdk/evmfabtoken/sdk.go:46-61",
+    "integration/token/common/sdk/evmdlog/sdk.go:49-61",
+    "token/sdk/dig/sdk.go:337-363",
+    "x/token/services/network/evm/network.go:590-609",
+    "integration/token/common/sdk/evmfabtoken/sdk.go:1-23"
+   ],
+   "signals": {
+    "bm25": 18.177406673381604,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q002",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/selector.md:56-71",
+    "docs/security/selector_resource_limits.md:133-156",
+    "docs/security/selector_resource_limits.md:1-16",
+    "docs/services/selector.md:14-42",
+    "docs/services/selector.md:86-96"
+   ],
+   "signals": {
+    "bm25": 18.836728128921973,
+    "coverage": 0.6215696087448085
+   },
+   "rank": 7,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q003",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/client/jsonrpc.go:694-715",
+    "token/token/token.go:36-54",
+    "token/services/storage/db/driver/token.go:34-52",
+    "token/core/fabtoken/v1/issue.go:117-140",
+    "x/token/services/network/evm/client/jsonrpc.go:619-655"
+   ],
+   "signals": {
+    "bm25": 13.698217737731227,
+    "coverage": 0.7411590347252454
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q004",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/eip712/digest.go:1-30",
+    "x/token/services/network/evm/contracts/README.md:1-16",
+    "x/token/services/network/evm/eip712/doc.go:1-14",
+    "x/token/services/network/evm/abi/statedelta.go:23-45",
+    "x/token/services/network/evm/eip712/hashstruct.go:1-21"
+   ],
+   "signals": {
+    "bm25": 42.840591817224436,
+    "coverage": 0.8509861819079668
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q005",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/config.go:193-223",
+    "integration/nwo/token/evm/config.go:67-103",
+    "x/token/services/network/evm/finality/manager.go:70-103",
+    "token/services/network/fabricx/finality/config.go:1-28",
+    "x/token/services/network/evm/config.go:246-273"
+   ],
+   "signals": {
+    "bm25": 23.614056442502154,
+    "coverage": 0.7584794548289923
+   },
+   "rank": 9,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q006",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/drivers/dlogwogh.md:950-964",
+    "token/core/zkatdlog/nogh/v1/audit/auditor.go:543-567",
+    "token/core/common/auditor.go:575-603",
+    "docs/drivers/dlogwogh.md:931-949",
+    "token/core/fabtoken/v1/audit/auditor.go:101-126"
+   ],
+   "signals": {
+    "bm25": 21.146222983660802,
+    "coverage": 0.8361934765183233
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q007",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/selector.md:56-71",
+    "docs/security/selector_resource_limits.md:1-16",
+    "token/services/selector/testutils/test_cases.go:64-85",
+    "token/services/selector/sherdlock/selector.go:197-215",
+    "token/services/selector/testutils/test_cases.go:86-101"
+   ],
+   "signals": {
+    "bm25": 24.49300485218252,
+    "coverage": 0.7102243235251237
+   },
+   "rank": 4,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q008",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network-fabric.md:654-679",
+    "docs/services/network-fabricx.md:551-556",
+    "docs/services/network.md:227-239",
+    "docs/services/ttx.md:566-575",
+    "docs/services/finality.md:106-124"
+   ],
+   "signals": {
+    "bm25": 18.34620875535398,
+    "coverage": 1
+   },
+   "rank": 5,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q009",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/endorsement/initiator.go:32-48",
+    "x/token/services/network/evm/network.go:259-288",
+    "x/token/services/network/evm/endorsement/initiator.go:266-290",
+    "x/token/services/network/evm/endorsement/service.go:29-54",
+    "x/token/services/network/evm/endorsement/messages.go:103-114"
+   ],
+   "signals": {
+    "bm25": 18.57993841476813,
+    "coverage": 0.7425355923853105
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q010",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/ttx/db.go:29-56",
+    "token/services/ttx/owner.go:34-53",
+    "token/services/ttx/owner.go:75-89",
+    "docs/services/storage/ttxdb.md:1-26",
+    "docs/services/finality.md:147-166"
+   ],
+   "signals": {
+    "bm25": 11.111599983250741,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q011",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "cmd/tokengen/README.md:1-30",
+    "cmd/tokengen/cobra/pp/fabtokenv1/gen.go:49-73",
+    "cmd/tokengen/cobra/pp/gen.go:1-27",
+    "cmd/tokengen/cobra/pp/fabtokenv1/gen.go:33-48",
+    "cmd/tokengen/cobra/pp/zkatdlognoghv1/gen.go:53-72"
+   ],
+   "signals": {
+    "bm25": 24.77131924066726,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q012",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/auditor/auditor.go:372-402",
+    "token/services/auditor/auditor.go:555-567",
+    "token/request.go:1423-1451",
+    "token/services/auditor/auditor.go:504-529",
+    "token/services/auditor/auditor.go:403-430"
+   ],
+   "signals": {
+    "bm25": 31.065026187404545,
+    "coverage": 0.6608585195265827
+   },
+   "rank": 3,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q013",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network-ethereum-internals.md:168-179",
+    "docs/services/network-ethereum.md:609-615",
+    "docs/services.md:78-87",
+    "token/services/network/fabric/network.go:231-254",
+    "x/token/services/network/evm/statedelta/translator.go:206-234"
+   ],
+   "signals": {
+    "bm25": 17.74716519017526,
+    "coverage": 0.5967143191398692
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q014",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/finality.md:106-124",
+    "docs/services/finality.md:408-418",
+    "docs/services.md:78-87",
+    "docs/services/network-fabricx.md:551-556",
+    "docs/services/network-fabric.md:654-679"
+   ],
+   "signals": {
+    "bm25": 17.477812436633698,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q015",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/selector/sherdlock/fetcher.go:118-139",
+    "token/services/selector/sherdlock/fetcher.go:34-51",
+    "docs/services/selector.md:277-292",
+    "docs/services/selector.md:240-259",
+    "token/services/selector/sherdlock/fetcher.go:52-72"
+   ],
+   "signals": {
+    "bm25": 55.60529637046896,
+    "coverage": 0.9021780991672578
+   },
+   "rank": 4,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q016",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "integration/token/common/sdk/evmfabtoken/sdk.go:1-23",
+    "integration/token/common/sdk/evmdlog/sdk.go:1-23",
+    "integration/token/common/sdk/evmfabtoken/sdk.go:62-75",
+    "integration/token/common/sdk/evmdlog/sdk.go:62-73",
+    "integration/token/common/sdk/evmdlog/sdk.go:24-48"
+   ],
+   "signals": {
+    "bm25": 36.714352366967525,
+    "coverage": 1
+   },
+   "rank": 3,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q017",
+   "type": "why",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/eip712/doc.go:1-14",
+    "x/token/services/network/evm/eip712/digest.go:1-30",
+    "x/token/services/network/evm/endorsement/doc.go:19-28",
+    "x/token/services/network/evm/endorsement/messages.go:80-102",
+    "x/token/services/network/evm/endorsement/responder.go:57-72"
+   ],
+   "signals": {
+    "bm25": 32.00192366089577,
+    "coverage": 0.6617960215611947
+   },
+   "rank": 10,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q018",
+   "type": "why",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network-ethereum-deployment.md:75-88",
+    "docs/services/network-ethereum-deployment.md:21-33",
+    "docs/services/network-ethereum.md:445-466",
+    "docs/services/network-ethereum.md:420-444",
+    "docs/services/network-ethereum.md:528-554"
+   ],
+   "signals": {
+    "bm25": 36.95998766588062,
+    "coverage": 1
+   },
+   "rank": 6,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q019",
+   "type": "why",
+   "answerable": true,
+   "scored": false,
+   "top": [
+    "docs/services/finality.md:191-207",
+    "docs/services/storage.md:37-43",
+    "x/token/services/network/evm/network.go:359-369",
+    "docs/development/general.md:117-125",
+    "x/token/services/network/evm/endorsement/doc.go:19-28"
+   ],
+   "signals": {
+    "bm25": 18.26010893132765,
+    "coverage": 0.49123598611514113
+   }
+  },
+  {
+   "id": "q020",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/development/makefile.md:24-42",
+    "evm.mk:42-72",
+    "evm.mk:100-125",
+    "evm.mk:73-99",
+    "evm.mk:126-150"
+   ],
+   "signals": {
+    "bm25": 15.13698931121397,
+    "coverage": 0.7540093838276668
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q021",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "evm.mk:16-41",
+    "docs/development/makefile.md:24-42",
+    "evm.mk:1-15",
+    "x/token/services/network/evm/contracts/README.md:32-53",
+    ".github/workflows/tests.yml:168-189"
+   ],
+   "signals": {
+    "bm25": 25.257778417775008,
+    "coverage": 0.9355943567272103
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q022",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/development/documentation.md:1-35",
+    "Makefile:300-334",
+    "docs/development/documentation.md:36-62",
+    "docs/openssf/baseline_level_1.md:62-67",
+    ".github/workflows/docs.yml:48-76"
+   ],
+   "signals": {
+    "bm25": 34.74261824376041,
+    "coverage": 1
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q023",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/nwo/token/evm/besu.go:37-48",
+    "integration/nwo/token/evm/keys.go:1-29",
+    "integration/nwo/token/evm/deploy.go:38-58",
+    "integration/nwo/token/evm/besu.go:49-79",
+    "integration/nwo/token/evm/gateway_node.go:1-33"
+   ],
+   "signals": {
+    "bm25": 20.50951617747216,
+    "coverage": 0.39952523027957804
+   }
+  },
+  {
+   "id": "q024",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "x/token/services/network/evm/pp/watcher.go:1-30",
+    "docs/services/network-ethereum.md:1-26",
+    "docs/services/network-ethereum.md:983-1004",
+    "x/token/services/network/evm/driver.go:235-251",
+    "x/token/services/network/evm/client/types.go:1-31"
+   ],
+   "signals": {
+    "bm25": 17.317252506104122,
+    "coverage": 0.3655346570303777
+   }
+  },
+  {
+   "id": "q025",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/services/finality.md:91-105",
+    "token/services/network/fabric/finality/deliveryflm.go:184-212",
+    "docs/services/finality.md:355-365",
+    "docs/services/finality.md:366-378",
+    "x/token/services/network/evm/finality/manager.go:49-69"
+   ],
+   "signals": {
+    "bm25": 21.169287959474126,
+    "coverage": 0.6064018837259327
+   }
+  },
+  {
+   "id": "q026",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/go.mod:195-213",
+    "token/sdk/vault/provider.go:67-95",
+    "token/sdk/vault/vault.go:35-66",
+    "token/sdk/vault/vault.go:1-34",
+    "token/sdk/dig/sdk.go:194-205"
+   ],
+   "signals": {
+    "bm25": 16.97044162434593,
+    "coverage": 0.7072694867357691
+   }
+  },
+  {
+   "id": "q027",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/token/fungible/tests.go:1389-1404",
+    "docs/upgradability.md:39-50",
+    "token/core/zkatdlog/nogh/v1/validator/validator_transfer.go:32-50",
+    "docs/services/ttx.md:495-507",
+    "docs/upgradability.md:51-65"
+   ],
+   "signals": {
+    "bm25": 14.667107796376014,
+    "coverage": 0.5967375922307515
+   }
+  },
+  {
+   "id": "q028",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "token/core/zkatdlog/nogh/v1/validator/validator_transfer.go:107-129",
+    "cmd/token_validation_service/token_validation_service_bench.go:192-206",
+    "token/core/fabtoken/v1/validator/validator_transfer.go:78-101",
+    "token/core/zkatdlog/nogh/v1/transfer/action.go:134-166",
+    "docs/services/tokens.md:24-39"
+   ],
+   "signals": {
+    "bm25": 17.799480943007588,
+    "coverage": 0.4472141047349699
+   }
+  },
+  {
+   "id": "q029",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/development/debug-integration-tests.md:22-41",
+    "integration/ports.go:42-88",
+    "x/token/services/network/evm/client/jsonrpc.go:318-339",
+    "integration/ports.go:1-41",
+    "x/token/services/network/evm/client/jsonrpc.go:340-369"
+   ],
+   "signals": {
+    "bm25": 26.453336365699357,
+    "coverage": 0.2976329196141887
+   }
+  },
+  {
+   "id": "q030",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/token/fungible/support.go:453-472",
+    "integration/token/fungible/support.go:488-497",
+    "integration/token/interop/support.go:56-76",
+    "integration/token/fungible/support.go:120-153",
+    "integration/token/interop/support.go:77-102"
+   ],
+   "signals": {
+    "bm25": 8.363854381738927,
+    "coverage": 0.3470076907225073
+   }
+  }
+ ]
+}

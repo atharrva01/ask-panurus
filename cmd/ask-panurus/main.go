@@ -19,6 +19,7 @@ import (
 	"github.com/atharrva01/ask-panurus/internal/embed"
 	"github.com/atharrva01/ask-panurus/internal/index"
 	"github.com/atharrva01/ask-panurus/internal/ingest"
+	"github.com/atharrva01/ask-panurus/internal/retrieve"
 )
 
 // commitFile is written into a snapshot by scripts/snapshot.sh.
@@ -34,7 +35,7 @@ func main() {
 		Short:        "Grounded, cited answers about the Panurus codebase",
 		SilenceUsage: true,
 	}
-	root.AddCommand(indexCmd(), statusCmd())
+	root.AddCommand(indexCmd(), searchCmd(), statusCmd())
 	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}
@@ -60,6 +61,9 @@ text without an embedding is embedded. The new version goes live only when it
 is fully embedded; otherwise it is left ready for inspection.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
+			if opts.Chunker != "ast" && opts.Chunker != "fixed" {
+				return fmt.Errorf("unknown --chunker %q", opts.Chunker)
+			}
 			if opts.Commit == "" {
 				b, err := os.ReadFile(filepath.Join(opts.Root, commitFile))
 				if err != nil {
@@ -88,6 +92,7 @@ is fully embedded; otherwise it is left ready for inspection.`,
 	cmd.Flags().StringVar(&opts.Commit, "commit", "", "commit SHA of the snapshot (default: read from the snapshot)")
 	cmd.Flags().StringVar(&opts.Repo, "github-repo", "LFDT-Panurus/panurus", "GitHub owner/name used in citation links")
 	cmd.Flags().BoolVar(&opts.IncludeTests, "tests", false, "also index _test.go files (P1)")
+	cmd.Flags().StringVar(&opts.Chunker, "chunker", "ast", `chunker: "ast", or "fixed" for the run A baseline`)
 	cmd.Flags().StringVar(&out, "out", "", "also write the chunks as JSON lines to this file")
 	dbFlag(cmd, &db)
 	cmd.Flags().StringVar(&tei, "tei", os.Getenv("ASK_PANURUS_TEI"), "TEI embedding server URL (env ASK_PANURUS_TEI)")
@@ -103,7 +108,7 @@ func load(ctx context.Context, w io.Writer, db, tei string, activate bool, opts 
 	}
 	defer store.Close()
 
-	vid, err := store.CreateVersion(ctx, opts.Repo, opts.Commit, "ast")
+	vid, err := store.CreateVersion(ctx, opts.Repo, opts.Commit, opts.Chunker)
 	if err != nil {
 		return err
 	}
@@ -115,6 +120,9 @@ func load(ctx context.Context, w io.Writer, db, tei string, activate bool, opts 
 	}
 	if err := store.InsertChunks(ctx, vid, chunks); err != nil {
 		return fail(fmt.Errorf("insert chunks: %w", err))
+	}
+	if err := store.ComputeTermStats(ctx, vid); err != nil {
+		return fail(fmt.Errorf("term stats: %w", err))
 	}
 	fmt.Fprintf(w, "version  %d loaded (%d chunks)\n", vid, len(chunks))
 
@@ -165,6 +173,62 @@ func embedMissing(ctx context.Context, w io.Writer, store *index.Store, client *
 			(time.Duration(float64(len(pending)-done)/rate) * time.Second).Round(time.Second))
 	}
 	return nil
+}
+
+func searchCmd() *cobra.Command {
+	var (
+		db, tei string
+		o       retrieve.Options
+		mode    string
+		asJSON  bool
+	)
+	cmd := &cobra.Command{
+		Use:   "search QUESTION",
+		Short: "Retrieve the chunks for a question (no LLM)",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx := cmd.Context()
+			store, err := index.Open(ctx, db)
+			if err != nil {
+				return err
+			}
+			defer store.Close()
+			r := &retrieve.Retriever{Store: store}
+			if tei != "" {
+				client := embed.New(tei)
+				info, err := client.Info(ctx)
+				if err != nil {
+					return err
+				}
+				r.Embedder, r.Model = client, info.ModelID
+			}
+			o.Mode = retrieve.Mode(mode)
+			hits, err := r.Search(ctx, args[0], o)
+			if err != nil {
+				return err
+			}
+			w := cmd.OutOrStdout()
+			if asJSON {
+				return json.NewEncoder(w).Encode(hits)
+			}
+			for i, h := range hits {
+				name := h.Qualname
+				if name == "" {
+					name = "-"
+				}
+				fmt.Fprintf(w, "%2d. %.4f  %-5s %s:%d-%d  %s  %v\n", i+1, h.Score, h.Kind, h.Path, h.StartLine, h.EndLine, name, h.Ranks)
+			}
+			return nil
+		},
+	}
+	dbFlag(cmd, &db)
+	cmd.Flags().StringVar(&tei, "tei", os.Getenv("ASK_PANURUS_TEI"), "TEI embedding server URL; without it, vector search is skipped")
+	cmd.Flags().Int64Var(&o.VersionID, "version", 0, "index version to search (default: the live version)")
+	cmd.Flags().IntVar(&o.TopK, "top", 10, "number of results")
+	cmd.Flags().StringVar(&mode, "mode", "hybrid", "keyword, vector or hybrid")
+	cmd.Flags().StringSliceVar(&o.Kinds, "kind", nil, "restrict to chunk kinds (code, doc, build, test)")
+	cmd.Flags().BoolVar(&asJSON, "json", false, "print the hits as JSON")
+	return cmd
 }
 
 func statusCmd() *cobra.Command {

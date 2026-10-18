@@ -114,7 +114,7 @@ func (s *Store) CreateVersion(ctx context.Context, repo, commit, chunker string)
 var chunkColumns = []string{
 	"version_id", "id", "kind", "path", "package", "symbol", "receiver", "qualname",
 	"build_tags", "start_line", "end_line", "heading_path", "doc_comment", "imports",
-	"content", "embed_text", "content_hash", "has_type_info", "name_tokens", "body_tokens",
+	"content", "embed_text", "content_hash", "has_type_info", "name_tokens", "body_tokens", "ntokens",
 }
 
 // InsertChunks bulk-loads chunks into a version with COPY.
@@ -123,16 +123,47 @@ func (s *Store) InsertChunks(ctx context.Context, versionID int64, chunks []chun
 	for i := range chunks {
 		c := &chunks[i]
 		q := Qualname(c)
+		name := tokenize.Tokens(q + " " + c.Path)
+		body := tokenize.Tokens(c.DocComment + " " + c.Content)
 		rows[i] = []any{
 			versionID, c.ID, string(c.Kind), c.Path, null(c.Package), null(c.Symbol), null(c.Receiver), null(q),
 			null(c.BuildTags), c.StartLine, c.EndLine, null(c.HeadingPath), null(c.DocComment), c.Imports,
 			c.Content, c.EmbedText, c.ContentHash, c.HasTypeInfo,
-			tokenize.Join(strings.Join([]string{q, c.Path}, " ")),
-			tokenize.Join(c.DocComment + " " + c.Content),
+			strings.Join(name, " "), strings.Join(body, " "), len(name) + len(body),
 		}
 	}
 	_, err := s.Pool.CopyFrom(ctx, pgx.Identifier{"chunks"}, chunkColumns, pgx.CopyFromRows(rows))
 	return err
+}
+
+// ComputeTermStats records the document frequency of every keyword token in
+// a version, and its document count and average length, for BM25.
+func (s *Store) ComputeTermStats(ctx context.Context, versionID int64) error {
+	return pgx.BeginFunc(ctx, s.Pool, func(tx pgx.Tx) error {
+		if _, err := tx.Exec(ctx, `DELETE FROM term_stats WHERE version_id = $1`, versionID); err != nil {
+			return err
+		}
+		// ts_stat takes the query as text; the version ID is an integer, so
+		// formatting it in is safe.
+		if _, err := tx.Exec(ctx, fmt.Sprintf(`INSERT INTO term_stats (version_id, term, df)
+			SELECT %d, word, ndoc FROM ts_stat('SELECT tsv FROM chunks WHERE version_id = %d')`, versionID, versionID)); err != nil {
+			return err
+		}
+		_, err := tx.Exec(ctx, `UPDATE index_versions v SET n_docs = s.n, avg_tokens = s.avg
+			FROM (SELECT count(*) AS n, avg(ntokens)::real AS avg FROM chunks WHERE version_id = $1) s
+			WHERE v.id = $1`, versionID)
+		return err
+	})
+}
+
+// LiveVersion returns the ID of the live version.
+func (s *Store) LiveVersion(ctx context.Context) (int64, error) {
+	var id int64
+	err := s.Pool.QueryRow(ctx, `SELECT id FROM index_versions WHERE status = 'live'`).Scan(&id)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return 0, errors.New("no live index version; pass a version explicitly or activate one")
+	}
+	return id, err
 }
 
 // Qualname is the name a person would search for: Driver.New for methods,
