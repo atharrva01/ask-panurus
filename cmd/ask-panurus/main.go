@@ -3,10 +3,12 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
@@ -15,6 +17,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/atharrva01/ask-panurus/internal/answer"
 	"github.com/atharrva01/ask-panurus/internal/chunk"
 	"github.com/atharrva01/ask-panurus/internal/embed"
 	"github.com/atharrva01/ask-panurus/internal/index"
@@ -35,7 +38,7 @@ func main() {
 		Short:        "Grounded, cited answers about the Panurus codebase",
 		SilenceUsage: true,
 	}
-	root.AddCommand(indexCmd(), searchCmd(), statusCmd())
+	root.AddCommand(askCmd(), indexCmd(), searchCmd(), statusCmd(), activateCmd())
 	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}
@@ -229,6 +232,103 @@ func searchCmd() *cobra.Command {
 	cmd.Flags().StringSliceVar(&o.Kinds, "kind", nil, "restrict to chunk kinds (code, doc, build, test)")
 	cmd.Flags().BoolVar(&asJSON, "json", false, "print the hits as JSON")
 	return cmd
+}
+
+// askCmd is a thin client over the HTTP API (PRD section 6), so the CLI and
+// the web page always give the same answer.
+func askCmd() *cobra.Command {
+	var server string
+	var asJSON bool
+	cmd := &cobra.Command{
+		Use:   "ask QUESTION",
+		Short: "Ask a question and print the cited answer",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			body, _ := json.Marshal(map[string]string{"question": args[0]})
+			req, err := http.NewRequestWithContext(cmd.Context(), http.MethodPost, strings.TrimRight(server, "/")+"/v1/ask", bytes.NewReader(body))
+			if err != nil {
+				return err
+			}
+			req.Header.Set("Content-Type", "application/json")
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				return fmt.Errorf("is the server running? %w", err)
+			}
+			defer resp.Body.Close()
+			data, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return err
+			}
+			if resp.StatusCode != http.StatusOK {
+				var e struct{ Error string }
+				json.Unmarshal(data, &e)
+				return fmt.Errorf("server: %s: %s", resp.Status, e.Error)
+			}
+			w := cmd.OutOrStdout()
+			if asJSON {
+				_, err := w.Write(data)
+				return err
+			}
+			var a answer.Answer
+			if err := json.Unmarshal(data, &a); err != nil {
+				return err
+			}
+			fmt.Fprintln(w, a.Text)
+			fmt.Fprintln(w)
+			sources, title := a.Citations, "Sources"
+			if a.Refused {
+				sources, title = a.Pointers, "Closest sources"
+			}
+			if len(sources) > 0 {
+				fmt.Fprintln(w, title+":")
+				for _, c := range sources {
+					fmt.Fprintf(w, "  [%d] %s:%d-%d  %s\n      %s\n", c.N, c.Path, c.StartLine, c.EndLine, c.Qualname, c.URL)
+				}
+			}
+			fmt.Fprintf(w, "\nconfidence %s · indexed %.12s · request %s\n", a.Confidence, a.IndexedSHA, a.RequestID)
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&server, "server", envOr("ASK_PANURUS_SERVER", "http://127.0.0.1:8080"), "Ask Panurus server URL (env ASK_PANURUS_SERVER)")
+	cmd.Flags().BoolVar(&asJSON, "json", false, "print the raw JSON response")
+	return cmd
+}
+
+func activateCmd() *cobra.Command {
+	var db string
+	cmd := &cobra.Command{
+		Use:   "activate VERSION",
+		Short: "Make an index version live",
+		Long: `Make an index version live, retiring the current one in the same transaction.
+A version without embeddings can be activated; the server then answers from
+keyword and symbol search only.`,
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			var id int64
+			if _, err := fmt.Sscan(args[0], &id); err != nil {
+				return fmt.Errorf("version must be a number: %w", err)
+			}
+			store, err := index.Open(cmd.Context(), db)
+			if err != nil {
+				return err
+			}
+			defer store.Close()
+			if err := store.Activate(cmd.Context(), id); err != nil {
+				return err
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "version %d is live\n", id)
+			return nil
+		},
+	}
+	dbFlag(cmd, &db)
+	return cmd
+}
+
+func envOr(k, def string) string {
+	if v := os.Getenv(k); v != "" {
+		return v
+	}
+	return def
 }
 
 func statusCmd() *cobra.Command {

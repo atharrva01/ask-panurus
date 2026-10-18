@@ -4,3 +4,4 @@ chunks*.jsonl
 out/
 __pycache__/
 *.pyc
+/ask-panurus-server

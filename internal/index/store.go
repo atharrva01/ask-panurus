@@ -10,6 +10,7 @@ import (
 	"io/fs"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -156,6 +157,17 @@ func (s *Store) ComputeTermStats(ctx context.Context, versionID int64) error {
 	})
 }
 
+// VersionMeta returns the repository, commit and build time of a version.
+func (s *Store) VersionMeta(ctx context.Context, id int64) (repo, commit string, finished time.Time, err error) {
+	var f *time.Time
+	err = s.Pool.QueryRow(ctx, `SELECT repo, commit_sha, finished_at FROM index_versions WHERE id = $1`, id).
+		Scan(&repo, &commit, &f)
+	if f != nil {
+		finished = *f
+	}
+	return repo, commit, finished, err
+}
+
 // LiveVersion returns the ID of the live version.
 func (s *Store) LiveVersion(ctx context.Context) (int64, error) {
 	var id int64
@@ -243,6 +255,25 @@ func (s *Store) Finish(ctx context.Context, versionID int64, stats any, activate
 		}
 		_, err := tx.Exec(ctx, `UPDATE index_versions SET status = $2, stats = $3, finished_at = now() WHERE id = $1`,
 			versionID, status, b)
+		return err
+	})
+}
+
+// Activate makes a finished version live and retires the previous one, in
+// one transaction.
+func (s *Store) Activate(ctx context.Context, versionID int64) error {
+	return pgx.BeginFunc(ctx, s.Pool, func(tx pgx.Tx) error {
+		var status string
+		if err := tx.QueryRow(ctx, `SELECT status FROM index_versions WHERE id = $1`, versionID).Scan(&status); err != nil {
+			return fmt.Errorf("version %d: %w", versionID, err)
+		}
+		if status == "building" || status == "failed" {
+			return fmt.Errorf("version %d is %s and cannot be activated", versionID, status)
+		}
+		if _, err := tx.Exec(ctx, `UPDATE index_versions SET status = 'retired' WHERE status = 'live'`); err != nil {
+			return err
+		}
+		_, err := tx.Exec(ctx, `UPDATE index_versions SET status = 'live' WHERE id = $1`, versionID)
 		return err
 	})
 }

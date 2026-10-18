@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask Panurus</title>
+<style>
+  :root { --bg: #fff; --fg: #1d1f23; --muted: #626872; --line: #e3e5e8; --accent: #2457c5; --soft: #f5f6f8; --warn: #8a5a00; --warnbg: #fff6e0; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #15171a; --fg: #e6e8eb; --muted: #9aa1ab; --line: #2c3036; --accent: #7ea6ff; --soft: #1d2024; --warn: #f0c060; --warnbg: #2a2416; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  form { display: flex; gap: 8px; }
+  textarea { flex: 1; min-height: 3.2em; resize: vertical; padding: 10px 12px; font: inherit; color: inherit; background: var(--soft); border: 1px solid var(--line); border-radius: 8px; }
+  button { padding: 0 18px; font: inherit; font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 8px; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: wait; }
+  .examples { margin: 12px 0 28px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .examples a { font-size: .85rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); text-decoration: none; cursor: pointer; }
+  .examples a:hover { color: var(--fg); border-color: var(--muted); }
+  #answer { white-space: pre-wrap; }
+  .refusal { padding: 12px 14px; background: var(--warnbg); color: var(--warn); border-radius: 8px; }
+  .meta { color: var(--muted); font-size: .85rem; margin: 10px 0 0; }
+  h2 { font-size: 1rem; margin: 28px 0 10px; }
+  ol.sources { padding-left: 1.4em; }
+  ol.sources li { margin-bottom: 12px; }
+  ol.sources a { color: var(--accent); word-break: break-all; }
+  pre { margin: 6px 0 0; padding: 8px 10px; background: var(--soft); border: 1px solid var(--line); border-radius: 6px; font-size: .8rem; overflow-x: auto; white-space: pre; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
+  sup a { color: var(--accent); text-decoration: none; font-size: .75em; }
+  .error { color: #c33; }
+  footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ask Panurus</h1>
+  <p class="sub">Answers about the Panurus codebase, cited to the exact code, docs and build files. If the sources don't answer it, it says so.</p>
+
+  <form id="ask">
+    <textarea id="q" name="q" maxlength="1000" placeholder="Ask about Panurus…" required></textarea>
+    <button id="go" type="submit">Ask</button>
+  </form>
+  <div class="examples" id="examples"></div>
+
+  <section id="out" hidden>
+    <div id="answer"></div>
+    <p class="meta" id="meta"></p>
+    <h2 id="srcTitle">Sources</h2>
+    <ol class="sources" id="sources"></ol>
+  </section>
+
+  <footer id="footer">Loading index status…</footer>
+</main>
+<script>
+const examples = [
+  "How does the sherdlock selector decide which tokens to spend?",
+  "How is transaction finality detected on FabricX?",
+  "Why doesn't the EVM endorsement request carry the EIP-712 digest for endorsers to sign?",
+  "How do I run the EVM integration tests locally?",
+];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+for (const e of examples) {
+  const a = document.createElement("a");
+  a.textContent = e;
+  a.onclick = () => { $("q").value = e; ask(); };
+  $("examples").append(a);
+}
+
+// Escape first, then add markup, so model output can never inject HTML.
+function render(text) {
+  return esc(text)
+    .replace(/`([^`\n]+)`/g, "<code>$1</code>")
+    .replace(/\[(\d+)\]/g, '<sup><a href="#src-$1">[$1]</a></sup>');
+}
+
+function source(c, id) {
+  const li = document.createElement("li");
+  if (id) li.id = id;
+  const name = c.qualname ? ` <code>${esc(c.qualname)}</code>` : "";
+  li.innerHTML = `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.path)}:${c.start_line}-${c.end_line}</a>${name}` +
+    `<pre><code>${esc(c.snippet)}</code></pre>`;
+  return li;
+}
+
+async function ask() {
+  const question = $("q").value.trim();
+  if (!question) return;
+  $("go").disabled = true;
+  $("out").hidden = false;
+  $("answer").className = "";
+  $("answer").textContent = "Searching the index and writing an answer…";
+  $("meta").textContent = "";
+  $("sources").replaceChildren();
+  try {
+    const res = await fetch("/v1/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question }) });
+    const a = await res.json();
+    if (!res.ok) throw new Error(a.error || res.statusText);
+    if (a.refused) {
+      $("answer").className = "refusal";
+      $("answer").textContent = a.answer;
+      $("srcTitle").textContent = "Closest sources";
+      for (const c of a.pointers || []) $("sources").append(source(c));
+    } else {
+      $("answer").innerHTML = render(a.answer);
+      $("srcTitle").textContent = "Sources";
+      for (const c of a.citations) $("sources").append(source(c, "src-" + c.n));
+    }
+    $("meta").textContent = `Confidence: ${a.confidence} · indexed commit ${a.indexed_sha.slice(0, 12)} · request ${a.request_id}`;
+  } catch (err) {
+    $("answer").className = "error";
+    $("answer").textContent = "Error: " + err.message;
+  } finally {
+    $("go").disabled = false;
+  }
+}
+
+$("ask").onsubmit = (e) => { e.preventDefault(); ask(); };
+$("q").onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); } };
+
+fetch("/v1/status").then((r) => r.json()).then((s) => {
+  if (s.error) { $("footer").textContent = s.error; return; }
+  const when = s.indexed_at ? new Date(s.indexed_at).toISOString().slice(0, 10) : "unknown date";
+  $("footer").innerHTML = `Indexed <a href="https://github.com/${esc(s.repo)}/commit/${esc(s.indexed_sha)}">${esc(s.indexed_sha.slice(0, 12))}</a> (${when}). ` +
+    `Answers come only from indexed code, docs and build files; issues and PRs are not indexed yet.`;
+}).catch(() => { $("footer").textContent = "Index status unavailable."; });
+</script>
+</body>
+</html>
