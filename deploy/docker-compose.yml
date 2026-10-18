@@ -32,9 +32,11 @@ services:
       - "64"
       # The default token budget is sized for large hosts, and warm-up is
       # OOM-killed on a 4 GB machine. 4096 still fits the largest chunk
-      # (chunk.Cap keeps chunks near 1,500 estimated tokens).
+      # (chunk.Cap keeps chunks near 1,500 estimated tokens). Serving only
+      # needs room for a question, so TEI_MAX_BATCH_TOKENS=512 frees memory
+      # for a local LLM; it also caps input length, so re-index at 4096.
       - --max-batch-tokens
-      - "4096"
+      - "${TEI_MAX_BATCH_TOKENS:-4096}"
     ports:
       - "127.0.0.1:8081:80"
     volumes:
@@ -47,6 +49,10 @@ services:
   ollama:
     image: ollama/ollama:0.9.6
     profiles: ["llm"]
+    environment:
+      # The answer prompt carries up to 6,000 tokens of context, and Ollama
+      # silently truncates prompts longer than its window.
+      OLLAMA_CONTEXT_LENGTH: "8192"
     ports:
       - "127.0.0.1:11434:11434"
     volumes:

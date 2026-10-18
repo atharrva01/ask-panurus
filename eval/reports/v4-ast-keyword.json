@@ -1,0 +1,647 @@
+{
+ "run": "v4-ast-keyword",
+ "date": "2026-10-18T12:44:16+00:00",
+ "evalset": "eval/v1.yaml",
+ "panurus_commit": "6cf946a9b519f4691a195ce02f220bbc1fadc473",
+ "index_version": 4,
+ "mode": "keyword",
+ "note": "AST chunks, jina-v2-base-code, version 4",
+ "overall": {
+  "n": 21,
+  "recall@5": 0.7142857142857143,
+  "recall@10": 0.7619047619047619,
+  "mrr": 0.5584656084656084,
+  "hits@5": 15
+ },
+ "by_type": {
+  "locate": {
+   "n": 6,
+   "recall@5": 0.6666666666666666,
+   "recall@10": 0.6666666666666666,
+   "mrr": 0.33888888888888885,
+   "hits@5": 4
+  },
+  "explain": {
+   "n": 6,
+   "recall@5": 1.0,
+   "recall@10": 1.0,
+   "mrr": 0.8888888888888888,
+   "hits@5": 6
+  },
+  "compare": {
+   "n": 4,
+   "recall@5": 0.5,
+   "recall@10": 0.5,
+   "mrr": 0.625,
+   "hits@5": 2
+  },
+  "why": {
+   "n": 2,
+   "recall@5": 1.0,
+   "recall@10": 1.0,
+   "mrr": 0.625,
+   "hits@5": 2
+  },
+  "how-to": {
+   "n": 3,
+   "recall@5": 0.3333333333333333,
+   "recall@10": 0.6666666666666666,
+   "mrr": 0.20370370370370372,
+   "hits@5": 1
+  }
+ },
+ "pending_issue_sources": [
+  "q019"
+ ],
+ "refusal_signals": {
+  "bm25": {
+   "threshold": 20.675348843828417,
+   "refusal_accuracy": 0.375,
+   "false_refusal_rate": 0.09523809523809523,
+   "answerable_median": 26.72250358654597,
+   "unanswerable_median": 24.218425516668976
+  },
+  "coverage": {
+   "threshold": 0.7063714366072756,
+   "refusal_accuracy": 1.0,
+   "false_refusal_rate": 0.2857142857142857,
+   "answerable_median": 0.896478554216046,
+   "unanswerable_median": 0.5798514690948792
+  }
+ },
+ "questions": [
+  {
+   "id": "q001",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "integration/token/common/sdk/evmdlog/sdk.go:49-73",
+    "integration/token/common/sdk/evmfabtoken/sdk.go:51-75",
+    "x/token/services/network/evm/driver.go:151-228",
+    "token/sdk/driver.go:19-47",
+    "token/sdk/dig/sdk.go:353-363"
+   ],
+   "signals": {
+    "bm25": 21.556802816864966,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q002",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/security/selector_resource_limits.md:136-173",
+    "docs/services/selector.md:53-86",
+    "docs/security/selector_resource_limits.md:174-212",
+    "token/services/selector/testutils/test_cases.go:81-109",
+    "docs/services/selector.md:80-112"
+   ],
+   "signals": {
+    "bm25": 23.071051220192416,
+    "coverage": 0.5354510188569047
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q003",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/core/fabtoken/v1/transfer.go:194-268",
+    "x/token/services/network/evm/client/jsonrpc.go:708-729",
+    "token/services/storage/db/driver/token.go:22-63",
+    "token/token/token.go:41-53",
+    "token/core/fabtoken/v1/issue.go:112-167"
+   ],
+   "signals": {
+    "bm25": 16.710230403625463,
+    "coverage": 0.8976687168280822
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q004",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/statedelta/types.go:42-80",
+    "x/token/services/network/evm/statedelta/translator.go:126-165",
+    "x/token/services/network/evm/eip712/digest.go:14-30",
+    "x/token/services/network/evm/endorsement/responder.go:33-62",
+    "x/token/services/network/evm/abi/statedelta.go:22-31"
+   ],
+   "signals": {
+    "bm25": 48.86418718282729,
+    "coverage": 0.863853009776426
+   },
+   "rank": 3,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q005",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/finality/manager.go:63-93",
+    "x/token/services/network/evm/config.go:21-47",
+    "integration/nwo/token/evm/config.go:19-43",
+    "docs/configuration.md:86-197",
+    "x/token/services/network/evm/driver.go:230-322"
+   ],
+   "signals": {
+    "bm25": 29.65039362484009,
+    "coverage": 0.8239498016415153
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q006",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/drivers/dlogwogh.md:923-977",
+    "docs/drivers/dlogwogh.md:967-1048",
+    "token/core/zkatdlog/nogh/v1/audit/auditor.go:527-592",
+    "token/core/zkatdlog/nogh/v1/benchmark/auditor_setup.go:35-126",
+    "token/request.go:614-726"
+   ],
+   "signals": {
+    "bm25": 32.78387629563154,
+    "coverage": 1
+   },
+   "rank": 5,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q007",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/selector.md:53-86",
+    "token/services/selector/testutils/test_cases.go:81-109",
+    "token/services/storage/db/sql/query/pagination/offset.go:21-36",
+    "docs/security/selector_resource_limits.md:3-20",
+    "docs/services/selector.md:80-112"
+   ],
+   "signals": {
+    "bm25": 28.365334568117,
+    "coverage": 0.7063714366072756
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q008",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/finality.md:102-145",
+    "docs/services/finality.md:202-237",
+    "docs/configuration.md:86-197",
+    "docs/services/network-fabricx.md:549-556",
+    "docs/services/finality.md:411-424"
+   ],
+   "signals": {
+    "bm25": 23.937958121398403,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q009",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/endorsement/initiator.go:119-208",
+    "x/token/services/network/evm/network.go:276-308",
+    "x/token/services/network/evm/endorsement/initiator.go:254-292",
+    "x/token/services/network/evm/endorsement/initiator.go:31-45",
+    "x/token/services/network/evm/network.go:29-34"
+   ],
+   "signals": {
+    "bm25": 25.70717394372222,
+    "coverage": 0.690241089403124
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q010",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/ttx/db.go:53-86",
+    "token/services/ttx/owner.go:43-46",
+    "token/services/auditor/auditor.go:275-343",
+    "token/services/storage/auditdb/store.go:202-269",
+    "token/services/storage/db/dbtest/notifier.go:135-139"
+   ],
+   "signals": {
+    "bm25": 13.321289543329016,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q011",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "cmd/tokengen/cobra/pp/zkatdlognoghv1/gen.go:84-119",
+    "cmd/tokengen/cobra/pp/fabtokenv1/gen.go:55-84",
+    "cmd/tokengen/README.md:25-34",
+    "integration/nwo/token/generators/generators.go:17-35",
+    "docs/public_parameters.md:13-21"
+   ],
+   "signals": {
+    "bm25": 26.72250358654597,
+    "coverage": 1
+   },
+   "rank": 3,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q012",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/request.go:1431-1486",
+    "token/services/auditor/auditor.go:501-526",
+    "token/request.go:183-194",
+    "token/services/auditor/auditor.go:553-645",
+    "token/services/auditor/auditor.go:370-418"
+   ],
+   "signals": {
+    "bm25": 36.224060450133095,
+    "coverage": 0.5908989738220958
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q013",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network-ethereum-internals.md:170-192",
+    "docs/drivers/dlogwogh.md:1251-1287",
+    ".github/workflows/nightly-fuzz.yml:20-149",
+    "docs/services/network-ethereum.md:579-620",
+    "docs/security/tcc_query_limits.md:78-111"
+   ],
+   "signals": {
+    "bm25": 22.445942953793317,
+    "coverage": 0.5944334313529899
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q014",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/finality.md:102-145",
+    "docs/configuration.md:86-197",
+    "docs/services/finality.md:202-237",
+    "docs/services/network-fabricx.md:549-556",
+    "docs/services/finality.md:411-424"
+   ],
+   "signals": {
+    "bm25": 24.01670799243605,
+    "coverage": 1
+   },
+   "rank": 1,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q015",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/selector/sherdlock/fetcher.go:125-133",
+    "docs/services/selector.md:221-247",
+    "token/services/selector/sherdlock/fetcher.go:38-50",
+    "token/services/selector/sherdlock/fetcher.go:135-142",
+    "docs/configuration.md:5-85"
+   ],
+   "signals": {
+    "bm25": 60.30330066407019,
+    "coverage": 0.8997990146976416
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q016",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "integration/token/common/sdk/evmdlog/sdk.go:49-73",
+    "integration/token/common/sdk/evmfabtoken/sdk.go:51-75",
+    "x/token/services/network/evm/driver.go:112-149",
+    "integration/token/common/sdk/evmdlog/sdk.go:39-42",
+    "integration/token/common/sdk/evmdlog/sdk.go:34-37"
+   ],
+   "signals": {
+    "bm25": 22.713259057905645,
+    "coverage": 0.5904119094138899
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q017",
+   "type": "why",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/endorsement/messages.go:96-117",
+    "x/token/services/network/evm/envelope.go:19-37",
+    "x/token/services/network/evm/endorsement/responder.go:33-62",
+    "x/token/services/network/evm/endorsement/messages.go:42-64",
+    "x/token/services/network/evm/statedelta/types.go:82-146"
+   ],
+   "signals": {
+    "bm25": 42.791924914297915,
+    "coverage": 0.8230128630966502
+   },
+   "rank": 4,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q018",
+   "type": "why",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network-ethereum.md:452-521",
+    "docs/services/network-ethereum-deployment.md:57-92",
+    "docs/services/network-ethereum.md:397-454",
+    "docs/services/network-ethereum.md:518-580",
+    "docs/services/network-ethereum-deployment.md:14-27"
+   ],
+   "signals": {
+    "bm25": 46.64539195412681,
+    "coverage": 0.896478554216046
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q019",
+   "type": "why",
+   "answerable": true,
+   "scored": false,
+   "top": [
+    "x/token/services/network/evm/network.go:356-424",
+    "docs/services/network-ethereum.md:678-731",
+    "integration/token/fungible/views/transfer.go:577-694",
+    "x/token/services/network/evm/pp/provider.go:48-76",
+    "x/token/services/network/evm/driver.go:230-322"
+   ],
+   "signals": {
+    "bm25": 32.2962898407451,
+    "coverage": 0.7389507969814163
+   }
+  },
+  {
+   "id": "q020",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    ".github/workflows/tests.yml:183-345",
+    "docs/development/debug-integration-tests.md:13-47",
+    "integration/nwo/token/evm/config.go:19-43",
+    "docs/development/debug-integration-tests.md:105-144",
+    "integration/nwo/token/evm/gateway_node.go:70-176"
+   ],
+   "signals": {
+    "bm25": 20.675348843828417,
+    "coverage": 1
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q021",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    ".github/workflows/tests.yml:120-182",
+    "evm.mk:14-31",
+    "evm.mk:1-13",
+    "x/token/services/network/evm/contracts/README.md:23-35",
+    "docs/development/makefile.md:19-27"
+   ],
+   "signals": {
+    "bm25": 29.09414209639149,
+    "coverage": 0.9292126052618875
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q022",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/development/documentation.md:35-51",
+    "docs/development/documentation.md:25-34",
+    "docs/openssf/baseline_level_1.md:22-31",
+    "docs/development/documentation.md:9-12",
+    "x/token/services/network/evm/endorsement/delta.go:70-128"
+   ],
+   "signals": {
+    "bm25": 29.65925717099821,
+    "coverage": 0.6738748152464669
+   },
+   "rank": 9,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q023",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/nwo/token/evm/keys.go:22-32",
+    "integration/nwo/token/evm/deploy.go:41-54",
+    "integration/nwo/token/evm/besu.go:45-60",
+    "x/token/services/network/evm/driver.go:230-322",
+    "x/token/services/network/evm/client/tx.go:19-22"
+   ],
+   "signals": {
+    "bm25": 23.99938011812368,
+    "coverage": 0.5271715232253475
+   }
+  },
+  {
+   "id": "q024",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "x/token/services/network/evm/config.go:21-47",
+    "x/token/services/network/evm/pp/watcher.go:22-25",
+    "x/token/services/network/evm/driver.go:230-322",
+    "integration/nwo/token/evm/config.go:19-43",
+    "token/services/storage/db/kvs/walletdb.go:201-246"
+   ],
+   "signals": {
+    "bm25": 19.08280405862359,
+    "coverage": 0.33058131678394986
+   }
+  },
+  {
+   "id": "q025",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/services/finality.md:56-101",
+    "docs/services/finality.md:348-371",
+    "token/services/network/fabricx/network.go:28-78",
+    "docs/services/network-fabric.md:391-453",
+    "token/services/network/fabricx/driver.go:43-131"
+   ],
+   "signals": {
+    "bm25": 29.527486526260233,
+    "coverage": 0.6356601470129373
+   }
+  },
+  {
+   "id": "q026",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/go.mod:121-237",
+    "token/sdk/vault/provider.go:45-95",
+    "token/sdk/dig/sdk.go:100-223",
+    "token/sdk/vault/vault.go:30-42",
+    "token/services/storage/db/kvs/hashicorp/vault_kvs.go:253-302"
+   ],
+   "signals": {
+    "bm25": 17.650139942307074,
+    "coverage": 0.698742936394241
+   }
+  },
+  {
+   "id": "q027",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/token/fungible/tests.go:1393-1487",
+    "integration/token/fungible/tests.go:1488-1520",
+    "docs/upgradability.md:44-86",
+    "token/core/zkatdlog/nogh/v1/validator/validator_transfer.go:32-116",
+    "docs/upgradability.md:163-196"
+   ],
+   "signals": {
+    "bm25": 24.218425516668976,
+    "coverage": 0.6275130623478417
+   }
+  },
+  {
+   "id": "q028",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/token/fungible/tests.go:1393-1487",
+    "integration/token/fungible/tests.go:1488-1520",
+    "docs/upgradability.md:44-86",
+    "token/core/zkatdlog/nogh/v1/validator/validator_transfer.go:32-116",
+    "integration/token/fungible/tests.go:885-964"
+   ],
+   "signals": {
+    "bm25": 27.67560888484142,
+    "coverage": 0.5798514690948792
+   }
+  },
+  {
+   "id": "q029",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "x/token/services/network/evm/client/jsonrpc.go:309-350",
+    "docs/development/debug-integration-tests.md:13-47",
+    "integration/ports.go:34-66",
+    "integration/token/fungible/support.go:1602-1666",
+    ".github/workflows/tests.yml:183-345"
+   ],
+   "signals": {
+    "bm25": 34.83971270534529,
+    "coverage": 0.29559952078500407
+   }
+  },
+  {
+   "id": "q030",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/token/fungible/tests.go:1393-1487",
+    "docs/upgradability.md:26-43",
+    "token/services/storage/db/driver/token.go:325-368",
+    "token/driver/vault.go:77-133",
+    "integration/token/fungible/support.go:457-469"
+   ],
+   "signals": {
+    "bm25": 10.0217949961779,
+    "coverage": 0.36691518682772667
+   }
+  }
+ ]
+}

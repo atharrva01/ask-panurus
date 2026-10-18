@@ -1,0 +1,610 @@
+{
+ "run": "v4-ast-vector",
+ "date": "2026-10-18T12:44:23+00:00",
+ "evalset": "eval/v1.yaml",
+ "panurus_commit": "6cf946a9b519f4691a195ce02f220bbc1fadc473",
+ "index_version": 4,
+ "mode": "vector",
+ "note": "AST chunks, jina-v2-base-code, version 4",
+ "overall": {
+  "n": 21,
+  "recall@5": 0.47619047619047616,
+  "recall@10": 0.6190476190476191,
+  "mrr": 0.27392290249433104,
+  "hits@5": 10
+ },
+ "by_type": {
+  "locate": {
+   "n": 6,
+   "recall@5": 0.3333333333333333,
+   "recall@10": 0.5,
+   "mrr": 0.19047619047619047,
+   "hits@5": 2
+  },
+  "explain": {
+   "n": 6,
+   "recall@5": 0.6666666666666666,
+   "recall@10": 0.6666666666666666,
+   "mrr": 0.34722222222222215,
+   "hits@5": 4
+  },
+  "compare": {
+   "n": 4,
+   "recall@5": 0.25,
+   "recall@10": 0.5,
+   "mrr": 0.2232142857142857,
+   "hits@5": 1
+  },
+  "why": {
+   "n": 2,
+   "recall@5": 0.5,
+   "recall@10": 0.5,
+   "mrr": 0.16666666666666666,
+   "hits@5": 1
+  },
+  "how-to": {
+   "n": 3,
+   "recall@5": 0.6666666666666666,
+   "recall@10": 1.0,
+   "mrr": 0.43333333333333335,
+   "hits@5": 2
+  }
+ },
+ "pending_issue_sources": [
+  "q019"
+ ],
+ "refusal_signals": {
+  "cosine": {
+   "threshold": 0.5880178388362481,
+   "refusal_accuracy": 0.375,
+   "false_refusal_rate": 0.0,
+   "answerable_median": 0.6773114608115841,
+   "unanswerable_median": 0.6591513956098929
+  }
+ },
+ "questions": [
+  {
+   "id": "q001",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network.md:204-216",
+    "x/token/services/network/evm/driver.go:37-39",
+    "docs/services/network.md:135-138",
+    "docs/services/network.md:48-64",
+    "token/sdk/dig/sdk.go:353-363"
+   ],
+   "signals": {
+    "cosine": 0.6397380638200647
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q002",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/ttx.md:493-498",
+    "integration/token/fungible/views/transfer.go:509-511",
+    "integration/token/interop/views/htlc/lock.go:25-43",
+    "token/services/selector/sherdlock/selector.go:25-32",
+    "integration/token/fungible/views/transfer.go:234-373"
+   ],
+   "signals": {
+    "cosine": 0.7011713207466197
+   },
+   "rank": 7,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q003",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/token/quantity.go:18-48",
+    "token/token/quantity.go:64-85",
+    "token/services/selector/testutils/test_cases.go:316-318",
+    "token/token/quantity.go:147-150",
+    "token/token/quantity.go:230-232"
+   ],
+   "signals": {
+    "cosine": 0.5880178388362481
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q004",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network-ethereum-internals.md:142-158",
+    "x/token/services/network/evm/eip712/digest.go:14-30",
+    "x/token/services/network/evm/statedelta/types.go:42-80",
+    "x/token/services/network/evm/eip712/hashstruct.go:14-25",
+    "x/token/services/network/evm/contracts/README.md:23-35"
+   ],
+   "signals": {
+    "cosine": 0.7031597318148466
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q005",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/network/fabricx/finality/config.go:58-66",
+    "token/services/network/fabricx/finality/config.go:11-26",
+    "x/token/services/network/evm/pp/watcher.go:22-25",
+    "docs/services/finality.md:382-395",
+    "token/services/ttx/finality_poller.go:18-24"
+   ],
+   "signals": {
+    "cosine": 0.6549549493166785
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q006",
+   "type": "locate",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/driver/request.go:619-659",
+    "token/core/fabtoken/v1/issue.go:112-167",
+    "token/core/common/auditor.go:159-188",
+    "token/metadata.go:232-241",
+    "token/services/identity/boolpolicy/identity.go:54-60"
+   ],
+   "signals": {
+    "cosine": 0.6469323810258366
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q007",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/selector/sherdlock/metrics.go:23-41",
+    "docs/development/metrics.md:178-200",
+    "docs/services/selector.md:53-86",
+    "docs/services/selector.md:80-112",
+    "token/services/selector/sherdlock/metrics.go:43-77"
+   ],
+   "signals": {
+    "cosine": 0.7217514398323658
+   },
+   "rank": 3,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q008",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/finality.md:411-424",
+    "docs/services/network-ethereum.md:812-847",
+    "token/services/network/fabricx/tms/common.go:117-136",
+    "integration/token/common/support.go:21-35",
+    "docs/services/finality.md:239-274"
+   ],
+   "signals": {
+    "cosine": 0.7038703737336187
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q009",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/endorsement/initiator.go:254-292",
+    "x/token/services/network/evm/nwo/setup.go:167-181",
+    "x/token/services/network/evm/config.go:283-359",
+    "docs/services/network-ethereum-deployment.md:43-56",
+    "docs/services/network-ethereum.md:678-731"
+   ],
+   "signals": {
+    "cosine": 0.6773114608115841
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q010",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/ttx/db.go:53-86",
+    "token/services/ttx/owner.go:43-46",
+    "token/services/auditor/auditor.go:275-343",
+    "token/services/storage/auditdb/store.go:202-269",
+    "token/services/storage/ttxdb/store.go:188-248"
+   ],
+   "signals": {
+    "cosine": 0.7889853715896606
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q011",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/development/tokengen.md:1-5",
+    "cmd/tokengen/README.md:1-6",
+    "cmd/tokengen/README.md:25-34",
+    "docs/public_parameters.md:9-12",
+    "docs/public_parameters.md:13-21"
+   ],
+   "signals": {
+    "cosine": 0.7615108120891697
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q012",
+   "type": "explain",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/auditor/auditor.go:370-418",
+    "docs/services/auditor.md:55-66",
+    "token/wallet.go:269-272",
+    "token/request.go:1431-1486",
+    "docs/services/auditor.md:49-54"
+   ],
+   "signals": {
+    "cosine": 0.6328929662704468
+   },
+   "rank": 4,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q013",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/core/zkatdlog/nogh/v1/testutils/env.go:1224-1323",
+    "docs/drivers/benchmark/core/fabtoken/fabtoken.md:8-11",
+    "x/token/services/network/evm/statedelta/translator.go:21-56",
+    "token/services/nfttx/transaction.go:22-22",
+    "integration/nwo/token/generators/crypto/fabtokenv1/gen.go:79-79"
+   ],
+   "signals": {
+    "cosine": 0.6048085925097123
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q014",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/network/fabricx/tms/common.go:117-136",
+    "token/services/network/fabricx/finality/finality.go:31-31",
+    "token/services/network/fabric/finality/manager.go:19-19",
+    "docs/services/finality.md:56-101",
+    "docs/services/finality.md:411-424"
+   ],
+   "signals": {
+    "cosine": 0.6439985228776495
+   },
+   "rank": 4,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q015",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "token/services/selector/sherdlock/fetcher.go:38-50",
+    "docs/services/selector.md:221-247",
+    "token/services/selector/sherdlock/fetcher.go:66-78",
+    "token/services/selector/sherdlock/fetcher.go:125-133",
+    "token/services/selector/sherdlock/fetcher.go:203-206"
+   ],
+   "signals": {
+    "cosine": 0.7232179692284441
+   },
+   "rank": 2,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q016",
+   "type": "compare",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "integration/token/common/sdk/fxdlog/sdk.go:27-29",
+    "integration/token/common/sdk/evmdlog/sdk.go:34-37",
+    "x/token/services/network/evm/driver.go:35-35",
+    "integration/nwo/token/evm/besu.go:30-30",
+    "integration/token/common/sdk/fdlog/sdk.go:22-24"
+   ],
+   "signals": {
+    "cosine": 0.6643062829971313
+   },
+   "rank": 7,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q017",
+   "type": "why",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/eip712/signer.go:20-28",
+    "x/token/services/network/evm/eip712/signer.go:30-36",
+    "x/token/services/network/evm/eip712/signer.go:38-50",
+    "x/token/services/network/evm/eip712/signer.go:92-110",
+    "x/token/services/network/evm/endorsement/deps.go:60-67"
+   ],
+   "signals": {
+    "cosine": 0.7127521805314923
+   },
+   "rank": null,
+   "r5": false,
+   "r10": false
+  },
+  {
+   "id": "q018",
+   "type": "why",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/services/network-ethereum.md:518-580",
+    "docs/services/network-ethereum-internals.md:23-32",
+    "docs/services/network-ethereum.md:452-521",
+    "token/services/storage/db/sql/common/tokens.go:71-85",
+    "x/token/services/network/evm/ledger.go:20-28"
+   ],
+   "signals": {
+    "cosine": 0.5936359344016297
+   },
+   "rank": 3,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q019",
+   "type": "why",
+   "answerable": true,
+   "scored": false,
+   "top": [
+    "docs/services/finality.md:198-200",
+    "docs/services/finality.md:22-49",
+    "x/token/services/network/evm/endorsement/messages.go:33-40",
+    "docs/services/finality.md:202-237",
+    "docs/services/finality.md:159-200"
+   ],
+   "signals": {
+    "cosine": 0.6566781410564727
+   }
+  },
+  {
+   "id": "q020",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "evm.mk:42-47",
+    "evm.mk:109-113",
+    "evm.mk:80-84",
+    "evm.mk:37-41",
+    "evm.mk:146-150"
+   ],
+   "signals": {
+    "cosine": 0.6650978526414733
+   },
+   "rank": 1,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q021",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "x/token/services/network/evm/contracts/README.md:36-55",
+    "docs/development/makefile.md:19-27",
+    "evm.mk:1-13",
+    "docs/services/network-ethereum-deployment.md:1-13",
+    "docs/services/network-ethereum-deployment.md:57-92"
+   ],
+   "signals": {
+    "cosine": 0.6825784066412945
+   },
+   "rank": 10,
+   "r5": false,
+   "r10": true
+  },
+  {
+   "id": "q022",
+   "type": "how-to",
+   "answerable": true,
+   "scored": true,
+   "top": [
+    "docs/development/documentation.md:1-8",
+    "docs/development/documentation.md:35-51",
+    "docs/development/documentation.md:25-34",
+    "docs/development/documentation.md:71-87",
+    "Makefile:318-322"
+   ],
+   "signals": {
+    "cosine": 0.7662865976266039
+   },
+   "rank": 5,
+   "r5": true,
+   "r10": true
+  },
+  {
+   "id": "q023",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/services/network-fabric.md:495-519",
+    "docs/services/network.md:107-109",
+    "docs/driverapi.md:234-243",
+    "docs/driverapi.md:65-85",
+    "docs/public_parameters.md:28-31"
+   ],
+   "signals": {
+    "cosine": 0.5612222290767578
+   }
+  },
+  {
+   "id": "q024",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "x/token/services/network/evm/contracts/README.md:1-4",
+    "docs/services/network-ethereum.md:211-230",
+    "x/token/services/network/evm/contracts/README.md:5-22",
+    "integration/nwo/token/evm/template.go:9-104",
+    "docs/services/network-ethereum.md:636-677"
+   ],
+   "signals": {
+    "cosine": 0.7411512732505798
+   }
+  },
+  {
+   "id": "q025",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/services/finality.md:372-381",
+    "token/services/network/fabric/finality/manager.go:25-25",
+    "docs/services/finality.md:56-101",
+    "token/services/network/fabricx/finality/finality.go:33-38",
+    "docs/services/network-fabric.md:475-494"
+   ],
+   "signals": {
+    "cosine": 0.6591513956098929
+   }
+  },
+  {
+   "id": "q026",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/services/storage.md:218-223",
+    "docs/development/storage.md:26-43",
+    "docs/services/storage.md:41-54",
+    "docs/services/storage.md:1-4",
+    "docs/tokenapi.md:96-102"
+   ],
+   "signals": {
+    "cosine": 0.6934196583532929
+   }
+  },
+  {
+   "id": "q027",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/token_sdk_usage.md:37-40",
+    "integration/token/fungible/support.go:1114-1121",
+    "docs/tokenapi.md:60-65",
+    "integration/token/fungible/views/issue.go:49-153",
+    "token/token/token.go:67-79"
+   ],
+   "signals": {
+    "cosine": 0.5755328283031491
+   }
+  },
+  {
+   "id": "q028",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "integration/token/fungible/views/issue.go:49-153",
+    "docs/tokenapi.md:60-65",
+    "docs/token_sdk_usage.md:37-40",
+    "integration/token/fungible/support.go:1114-1121",
+    "integration/token/fungible/views/transfer.go:577-694"
+   ],
+   "signals": {
+    "cosine": 0.6169239694796834
+   }
+  },
+  {
+   "id": "q029",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/services/network-ethereum.md:812-847",
+    "integration/nwo/token/evm/config.go:19-43",
+    "docs/services/network-ethereum.md:288-289",
+    "docs/services/network-ethereum.md:757-791",
+    "docs/services/network.md:103-106"
+   ],
+   "signals": {
+    "cosine": 0.5696867364831734
+   }
+  },
+  {
+   "id": "q030",
+   "type": "unanswerable",
+   "answerable": false,
+   "scored": false,
+   "top": [
+    "docs/tokensdk.md:1-6",
+    "docs/token_sdk_usage.md:6-36",
+    "docs/README.md:5-15",
+    "docs/token_sdk_usage.md:1-5",
+    "docs/tokenapi.md:5-14"
+   ],
+   "signals": {
+    "cosine": 0.7809385294001859
+   }
+  }
+ ]
+}
