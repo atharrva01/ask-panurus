@@ -1,0 +1,4 @@
+.data/
+chunks*.jsonl
+/ask-panurus
+out/
