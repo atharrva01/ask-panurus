@@ -1,0 +1,490 @@
+# Ask Panurus eval set v1 (PRD section 11).
+#
+# Every gold range was checked against the pinned commit below. Questions
+# are drafted from real Panurus issues and PRs where one exists (source),
+# and from the code otherwise. All are status: draft until the author has
+# reviewed them; a maintainer then reviews a sample of 20.
+#
+# Field notes:
+#   gold_ranges         file + inclusive line range; a retrieved chunk is a
+#                       hit if it overlaps any range
+#   require_all_ranges  compare questions: every range must be covered
+#   gold_refs           issues or PRs that hold the answer (Milestone 3)
+#   needs_sources       source kinds the answer depends on; "issues" means
+#                       the question cannot be answered before Milestone 3
+#   answerable: false   the right response is a refusal with pointers; the
+#                       note says what the closest real thing is
+version: 1
+panurus_repo: LFDT-Panurus/panurus
+panurus_commit: 6cf946a9b519f4691a195ce02f220bbc1fadc473
+
+questions:
+  # ---------------------------------------------------------------- locate
+  - id: q001
+    type: locate
+    status: draft
+    question: Where is the EVM network driver registered with the SDK?
+    answer: >-
+      evm.NewDriver is provided into the dig container under the
+      "network-drivers" group by the SDK modules, for example
+      integration/token/common/sdk/evmdlog/sdk.go SDK.Install, and the same in
+      evmfabtoken/sdk.go. NewDriver itself is in x/token/services/network/evm/driver.go.
+    required_facts:
+      - registered via dig.Group("network-drivers")
+      - done in the evmdlog (and evmfabtoken) SDK Install
+    gold_ranges:
+      - {path: integration/token/common/sdk/evmdlog/sdk.go, lines: [49, 73]}
+      - {path: integration/token/common/sdk/evmfabtoken/sdk.go, lines: [51, 75]}
+      - {path: x/token/services/network/evm/driver.go, lines: [112, 149]}
+    needs_sources: [code]
+    answerable: true
+    source: PRD example question
+
+  - id: q002
+    type: locate
+    status: draft
+    question: Which function in the sherdlock selector actually picks and locks the tokens for a transfer?
+    answer: Selector.selectInternal in token/services/selector/sherdlock/selector.go.
+    required_facts:
+      - Selector.selectInternal
+    gold_ranges:
+      - {path: token/services/selector/sherdlock/selector.go, lines: [177, 269]}
+    needs_sources: [code]
+    answerable: true
+    source: issue #2023
+
+  - id: q003
+    type: locate
+    status: draft
+    question: Where is a token's Quantity string parsed into a number?
+    answer: token.ToQuantity in token/token/quantity.go (and NewUBigQuantity), using big.Int SetString with base 0.
+    required_facts:
+      - ToQuantity in token/token/quantity.go
+    gold_ranges:
+      - {path: token/token/quantity.go, lines: [64, 85]}
+    needs_sources: [code]
+    answerable: true
+    source: issue #2030
+
+  - id: q004
+    type: locate
+    status: draft
+    question: Where does the EVM driver compute the EIP-712 digest of a StateDelta?
+    answer: eip712.Digest in x/token/services/network/evm/eip712/digest.go.
+    required_facts:
+      - eip712.Digest
+    gold_ranges:
+      - {path: x/token/services/network/evm/eip712/digest.go, lines: [14, 30]}
+    needs_sources: [code]
+    answerable: true
+    source: code
+
+  - id: q005
+    type: locate
+    status: draft
+    question: What is the default finality poll interval for the EVM driver, and where is it defined?
+    answer: DefaultPollInterval = 2 * time.Second in x/token/services/network/evm/config.go.
+    required_facts:
+      - 2 seconds
+      - DefaultPollInterval in x/token/services/network/evm/config.go
+    gold_ranges:
+      - {path: x/token/services/network/evm/config.go, lines: [21, 47]}
+    needs_sources: [code]
+    answerable: true
+    source: code
+
+  - id: q006
+    type: locate
+    status: draft
+    question: Where does an auditor check that the recipients of an issue action match the issue metadata?
+    answer: Request.extractIssueOutputs in token/request.go, which fails with "invalid recipient".
+    required_facts:
+      - Request.extractIssueOutputs in token/request.go
+    gold_ranges:
+      - {path: token/request.go, lines: [614, 726]}
+    needs_sources: [code]
+    answerable: true
+    source: issue #2081
+
+  # --------------------------------------------------------------- explain
+  - id: q007
+    type: explain
+    status: draft
+    question: How does the sherdlock selector decide which tokens to spend? Does it prefer small or large tokens?
+    answer: >-
+      It walks the candidate tokens in shuffled order, tries to lock each one,
+      adds it to a running sum, and stops as soon as the requested amount is
+      covered. Amount plays no part in which token is tried next, only in when
+      to stop; there is no smallest-first or other amount-aware strategy and no
+      configuration key that selects one.
+    required_facts:
+      - no amount-aware strategy (no smallest-first)
+      - locks candidates as it goes and stops when the sum covers the amount
+    gold_ranges:
+      - {path: token/services/selector/sherdlock/selector.go, lines: [177, 269]}
+      - {path: docs/services/selector.md, lines: [80, 112]}
+    needs_sources: [code, doc]
+    answerable: true
+    source: issue #2023
+
+  - id: q008
+    type: explain
+    status: draft
+    question: How is transaction finality detected on FabricX?
+    answer: >-
+      FabricX has no block-delivery stream, so finality is detected by
+      polling the FabricX query service: an NSListenerManager keeps a shared
+      pending-transaction map and a poll loop, and statuses are handed to a
+      worker queue that runs the network-agnostic ttx finality listener.
+    required_facts:
+      - polling the query service, not block delivery
+      - shared poller / pending map plus an async worker queue
+    gold_ranges:
+      - {path: docs/services/finality.md, lines: [102, 148]}
+    needs_sources: [doc]
+    answerable: true
+    source: issue #2368
+
+  - id: q009
+    type: explain
+    status: draft
+    question: How does the EVM driver collect endorsements and decide it has a quorum?
+    answer: >-
+      Initiator.Collect asks each endorser, discards declined responses and
+      unusable deltas, recomputes the EIP-712 digest of each returned delta,
+      recovers the signer, and groups signatures by digest. A quorum is reached
+      when enough distinct signers agree on the same digest; duplicate signers
+      are discarded, and differing deltas are logged as a translator
+      determinism bug.
+    required_facts:
+      - signatures grouped by EIP-712 digest of the returned delta
+      - quorum needs a threshold of distinct signers on the same digest
+    gold_ranges:
+      - {path: x/token/services/network/evm/endorsement/initiator.go, lines: [119, 208]}
+    needs_sources: [code]
+    answerable: true
+    source: code
+
+  - id: q010
+    type: explain
+    status: draft
+    question: What does ttx Service.Append do when a transaction is appended?
+    answer: >-
+      It writes the token request to the ttx store with AppendTransactionRecord,
+      then registers a finality listener for the transaction on its network
+      (AddFinalityListener with a ttx finality.Listener) so the record is
+      updated when the transaction is final.
+    required_facts:
+      - AppendTransactionRecord
+      - registers a finality listener with AddFinalityListener
+    gold_ranges:
+      - {path: token/services/ttx/db.go, lines: [53, 86]}
+    needs_sources: [code]
+    answerable: true
+    source: issue #1599
+
+  - id: q011
+    type: explain
+    status: draft
+    question: What is tokengen used for, and which command generates public parameters?
+    answer: >-
+      tokengen generates Panurus material such as public parameters and other
+      cryptographic artifacts, mainly for development and test environments.
+      `tokengen gen` generates public parameters for a driver such as
+      fabtoken.v1 or zkatdlognogh.v1.
+    required_facts:
+      - generates public parameters
+      - the gen subcommand
+    gold_ranges:
+      - {path: cmd/tokengen/README.md, lines: [1, 34]}
+    needs_sources: [doc]
+    answerable: true
+    source: issue #1296
+
+  - id: q012
+    type: explain
+    status: draft
+    question: When an auditor builds an AuditRecord, where does a transfer input's owner audit info come from?
+    answer: >-
+      From the request metadata: extractTransferInputs copies the sender's
+      audit info into the input. AuditRecord then looks the owner up in the
+      local wallet service, but only overrides the metadata value when that
+      lookup returns something, because the wallet service only knows
+      identities registered on this node.
+    required_facts:
+      - taken from the request metadata (sender audit info)
+      - local lookup only overrides when it is non-empty
+    gold_ranges:
+      - {path: token/request.go, lines: [1431, 1486]}
+      - {path: token/request.go, lines: [921, 952]}
+    needs_sources: [code]
+    answerable: true
+    source: issue #2087
+
+  # --------------------------------------------------------------- compare
+  - id: q013
+    type: compare
+    status: draft
+    question: How does spent tracking differ between fabtoken and zkatdlog in the ledger translator?
+    answer: >-
+      They use opposite polarity. Graph-revealing (fabtoken) tokens are spent
+      when their output key is absent: inputs must exist and spending deletes
+      them, so AreTokensSpent reports spent when the value is empty.
+      Graph-hiding (zkatdlog) tokens are spent when a serial-number key is
+      present: the serial number must not exist yet and spending writes it, so
+      AreTokensSpent reports spent when the value is non-empty.
+    required_facts:
+      - fabtoken (graph revealing) spent = key absent
+      - zkatdlog (graph hiding) spent = serial number present
+    gold_ranges:
+      - {path: token/services/network/common/rws/translator/translator.go, lines: [182, 209]}
+      - {path: token/services/network/common/rws/translator/translator.go, lines: [438, 521]}
+    require_all_ranges: false
+    needs_sources: [code]
+    answerable: true
+    source: PR #1701 review comment
+
+  - id: q014
+    type: compare
+    status: draft
+    question: How does finality detection on Fabric differ from FabricX?
+    answer: >-
+      Fabric streams blocks through FSC's delivery service and maps validated
+      transactions to listeners; FabricX has no delivery stream, so it polls
+      the FabricX query service from a shared poller and dispatches statuses
+      through an async worker queue. Both feed the same network-agnostic ttx
+      finality decision layer.
+    required_facts:
+      - Fabric uses block delivery streaming
+      - FabricX polls the query service with a worker queue
+    gold_ranges:
+      - {path: docs/services/finality.md, lines: [56, 101]}
+      - {path: docs/services/finality.md, lines: [102, 148]}
+    require_all_ranges: true
+    needs_sources: [doc]
+    answerable: true
+    source: issue #2368
+
+  - id: q015
+    type: compare
+    status: draft
+    question: What is the difference between the mixed, eager and lazy fetcher strategies of the sherdlock selector?
+    answer: >-
+      mixed (default) serves from the cache and falls back to a database query
+      when the cache has nothing for that wallet and currency; eager always
+      answers from the cache, which is refreshed on triggers, so it can offer
+      already-spent tokens; lazy always queries the database and keeps no
+      cache. The trade-off is staleness against query load, and the choice is
+      per node.
+    required_facts:
+      - mixed is the default with cache plus fallback query
+      - eager is cache only, lazy is database only
+    gold_ranges:
+      - {path: docs/services/selector.md, lines: [221, 247]}
+    needs_sources: [doc]
+    answerable: true
+    source: code
+
+  - id: q016
+    type: compare
+    status: draft
+    question: How do the evmdlog and evmfabtoken SDK modules differ?
+    answer: >-
+      Both register the EVM network driver in the "network-drivers" group; the
+      only difference is the token driver they install alongside it: evmdlog
+      provides the zkatdlog (dlog) token and validator drivers, evmfabtoken the
+      fabtoken ones.
+    required_facts:
+      - both register the EVM network driver
+      - evmdlog uses zkatdlog drivers, evmfabtoken uses fabtoken drivers
+    gold_ranges:
+      - {path: integration/token/common/sdk/evmdlog/sdk.go, lines: [49, 73]}
+      - {path: integration/token/common/sdk/evmfabtoken/sdk.go, lines: [51, 75]}
+    require_all_ranges: true
+    needs_sources: [code]
+    answerable: true
+    source: code
+
+  # ------------------------------------------------------------------- why
+  - id: q017
+    type: why
+    status: draft
+    question: Why doesn't the EVM endorsement request carry the EIP-712 digest for endorsers to sign?
+    answer: >-
+      By design: each endorser must recompute the StateDelta and its EIP-712
+      digest from the actions it validated and sign that, never a digest it
+      was handed. Otherwise a malicious initiator could get honest endorsers
+      to sign a delta that does not match the request they validated.
+    required_facts:
+      - endorsers recompute the delta and digest themselves
+      - prevents a malicious initiator from getting a mismatched delta signed
+    gold_ranges:
+      - {path: x/token/services/network/evm/endorsement/messages.go, lines: [42, 64]}
+    needs_sources: [code]
+    answerable: true
+    source: PRD example question (EIP-712 cross-check)
+
+  - id: q018
+    type: why
+    status: draft
+    question: Why does the TokenStateFactory clone and initialize a TokenState in a single transaction?
+    answer: >-
+      Because initialize is deliberately unguarded (the implementation is
+      locked and only a fresh clone can be initialized). Doing it in two
+      transactions would leave a window in which anyone could seize the clone
+      by initializing it first with their own verifier, and the honest
+      deployer's call would revert with AlreadyInitialized.
+    required_facts:
+      - initialize is unguarded
+      - two transactions would let someone else initialize (seize) the clone first
+    gold_ranges:
+      - {path: docs/services/network-ethereum.md, lines: [470, 483]}
+    needs_sources: [doc]
+    answerable: true
+    source: code
+
+  - id: q019
+    type: why
+    status: draft
+    question: Why don't approver (endorser) nodes track the finality of the token requests they record?
+    answer: >-
+      Approvers only record the token requests they processed, for auditing.
+      The validation logic of the current token drivers is stateless, so they
+      do not need to track the requests' status (answered by the maintainer
+      in issue #1599).
+    required_facts:
+      - approvers record requests for auditing purposes
+      - driver validation is stateless, so status tracking is not needed
+    gold_ranges: []
+    gold_refs: [issue/1599]
+    needs_sources: [issues]
+    answerable: true
+    source: issue #1599 (maintainer answer)
+
+  # ---------------------------------------------------------------- how-to
+  - id: q020
+    type: how-to
+    status: draft
+    question: How do I run the EVM integration tests locally?
+    answer: >-
+      Run `make integration-tests-evm` (it builds the Besu docker images first
+      and needs docker and forge, but no Fabric binaries). Subsets run with
+      targets such as `make integration-tests-evm-t1`, which set TEST_FILTER.
+    required_facts:
+      - make integration-tests-evm
+      - needs docker and forge (Besu backend)
+    gold_ranges:
+      - {path: evm.mk, lines: [42, 63]}
+    needs_sources: [build]
+    answerable: true
+    source: PRD example question
+
+  - id: q021
+    type: how-to
+    status: draft
+    question: How do I run the Solidity contract tests for the EVM driver?
+    answer: >-
+      `make test-evm-contracts`. It needs forge installed and the forge-std
+      submodule checked out (git submodule update --init --recursive);
+      otherwise it skips, or fails when EVM_CONTRACTS_REQUIRED=1.
+    required_facts:
+      - make test-evm-contracts
+      - requires forge and the forge-std submodule
+    gold_ranges:
+      - {path: evm.mk, lines: [14, 31]}
+    needs_sources: [build]
+    answerable: true
+    source: code
+
+  - id: q022
+    type: how-to
+    status: draft
+    question: How do I build and preview the documentation site locally?
+    answer: >-
+      `make docs-install` installs the dependencies from requirements.txt,
+      `make docs-serve` runs `mkdocs serve`, and `make docs-build` runs
+      `mkdocs build --strict`.
+    required_facts:
+      - mkdocs serve via make docs-serve
+      - make docs-install first
+    gold_ranges:
+      - {path: Makefile, lines: [313, 327]}
+    needs_sources: [build]
+    answerable: true
+    source: issue #1656
+
+  # ---------------------------------------------------------- unanswerable
+  # Mostly near-misses: plausible features next to real ones. Several share
+  # words with real content ("frozen", "seize", "Besu") on purpose, to test
+  # that the refusal is driven by meaning, not keyword overlap.
+  - id: q023
+    type: unanswerable
+    status: draft
+    question: How do I configure the EVM driver to send private transactions through Besu privacy groups?
+    note: The EVM backend is Besu, but there is no privacy-group or Tessera support.
+    closest: [evm.mk, docs/services/network-ethereum.md]
+    answerable: false
+    source: near-miss
+
+  - id: q024
+    type: unanswerable
+    status: draft
+    question: How do I expose Panurus EVM tokens as an ERC-20 contract so they can be traded on a DEX?
+    note: Tokens live in TokenState via StateDelta; there is no ERC-20 interface or wrapper.
+    closest: [docs/services/network-ethereum.md]
+    answerable: false
+    source: near-miss (issue #32 asked about ERC-20 plans)
+
+  - id: q025
+    type: unanswerable
+    status: draft
+    question: How do I configure a Kafka-based finality listener for the Fabric network driver?
+    note: Fabric finality uses FSC block delivery; there is no Kafka integration.
+    closest: [docs/services/finality.md]
+    answerable: false
+    source: near-miss
+
+  - id: q026
+    type: unanswerable
+    status: draft
+    question: How do I store the token vault in MongoDB?
+    note: Storage drivers are SQL (Postgres, SQLite) and KVS; no MongoDB driver.
+    closest: [token/services/storage/db]
+    answerable: false
+    source: near-miss
+
+  - id: q027
+    type: unanswerable
+    status: draft
+    question: How can an issuer freeze an owner's tokens so they cannot be transferred?
+    note: No freeze feature. "Frozen" appears only for the frozen StateDelta field order.
+    closest: [docs/services/network-ethereum.md]
+    answerable: false
+    source: near-miss (lexical trap)
+
+  - id: q028
+    type: unanswerable
+    status: draft
+    question: How can an issuer claw back tokens from an owner after a transfer has been committed?
+    note: No clawback. "Seize" appears only in the clone-initialization rationale.
+    closest: [docs/services/network-ethereum.md]
+    answerable: false
+    source: near-miss (lexical trap)
+
+  - id: q029
+    type: unanswerable
+    status: draft
+    question: How does the EVM driver subscribe to new blocks over a WebSocket (eth_subscribe newHeads) to detect finality?
+    note: False premise. The driver polls on a ticker (Finality.PollInterval, default 2s); no WebSocket subscriptions.
+    closest: [x/token/services/network/evm/config.go, x/token/services/network/evm/network.go]
+    answerable: false
+    source: near-miss (false premise)
+
+  - id: q030
+    type: unanswerable
+    status: draft
+    question: Does Panurus support issuing tokens on Solana?
+    note: Out of scope; the easy refusal case.
+    closest: []
+    answerable: false
+    source: out of scope

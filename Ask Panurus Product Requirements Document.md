@@ -16,7 +16,7 @@ Panurus is a large Go codebase with several token drivers (fabtoken, zkatdlog, E
 - **Docs and design documents:** the intended architecture, often lagging behind the code.
 - **Issues and PR discussions:** why decisions were made. This reasoning rarely reaches the docs.
 
-New contributors spend most of their early time locating code and reconstructing design intent. Maintainers answer the same onboarding questions repeatedly. Misreading the design causes real bugs: the spent-tracking polarity mismatch between fabtoken and zkatdlog found in PR #1701 came from exactly this kind of gap.
+New contributors spend most of their early time locating code and reconstructing design intent. Maintainers answer the same onboarding questions repeatedly. Gaps between design and code are easy to miss: in the review of the EVM driver design (PR #1701), the draft spec modelled spent tracking with a single "spent" set, while the shared ledger translator uses opposite polarities for fabtoken (spent means the key is absent) and zkatdlog (spent means a serial number is present). It was caught in review only because a contributor traced the translator code by hand.
 
 ### Solution in one line
 
