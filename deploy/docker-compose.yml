@@ -40,6 +40,19 @@ services:
     volumes:
       - hf-cache:/data
 
+  # Local LLM, the free path (PRD section 7). Optional, because it needs
+  # several GB of RAM:
+  #   docker compose -f deploy/docker-compose.yml --profile llm up -d ollama
+  #   docker compose -f deploy/docker-compose.yml exec ollama ollama pull qwen2.5-coder:3b
+  ollama:
+    image: ollama/ollama:0.9.6
+    profiles: ["llm"]
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+
 volumes:
   pgdata:
   hf-cache:
+  ollama:
